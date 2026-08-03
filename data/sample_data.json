@@ -1,0 +1,32 @@
+[
+  {
+    "text": "Amazing product! Love it so much!",
+    "date": "2024-01-15",
+    "source": "twitter",
+    "rating": 5
+  },
+  {
+    "text": "Terrible experience. Never buying again.",
+    "date": "2024-01-16",
+    "source": "facebook",
+    "rating": 1
+  },
+  {
+    "text": "It's decent. Nothing fancy but works.",
+    "date": "2024-01-17",
+    "source": "instagram",
+    "rating": 3
+  },
+  {
+    "text": "Absolutely fantastic! Exceeded all expectations!",
+    "date": "2024-01-18",
+    "source": "reddit",
+    "rating": 5
+  },
+  {
+    "text": "Disappointed with the quality.",
+    "date": "2024-01-19",
+    "source": "trustpilot",
+    "rating": 2
+  }
+]
