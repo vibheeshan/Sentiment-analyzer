@@ -15,15 +15,25 @@
 ### 🎯 Key Features
 
 ✅ **Sentiment Analysis** - Positive/Negative/Neutral classification
+
 ✅ **Emotion Detection** - Joy, Anger, Sadness, Surprise, Trust
+
 ✅ **Keyword Extraction** - Top themes and complaint drivers
+
 ✅ **Word Cloud** - Visual keyword frequency representation
+
 ✅ **Trend Detection** - Identify sentiment changes and spikes
+
 ✅ **Fake Review Detection** - Spot suspicious reviews
+
 ✅ **AI Insights** - Automatic analysis and recommendations
+
 ✅ **Multi-format Upload** - CSV, JSON, or manual text input
+
 ✅ **Smart Export** - Download as CSV or Excel
+
 ✅ **Secure Auth** - User accounts with encrypted passwords
+
 ✅ **Professional UI** - Modern SaaS-style dashboard
 
 ---
