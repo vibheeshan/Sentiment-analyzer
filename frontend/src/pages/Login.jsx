@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ShieldCheck, Mail, Key, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { apiService } from '../services/api';
 
-export default function Login({ onLogin, onSwitchToSignup }) {
+export default function Login({ onLogin, onSwitchToSignup, onBackToHome }) {
   const [identity, setIdentity] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -57,6 +57,17 @@ export default function Login({ onLogin, onSwitchToSignup }) {
   return (
     <div className="auth-shell">
       <div className="auth-card auth-card--wide">
+        {onBackToHome && (
+          <div className="mb-4">
+            <button
+              type="button"
+              onClick={onBackToHome}
+              className="text-xs font-bold text-slate-400 hover:text-purple-400 transition-colors flex items-center gap-1.5"
+            >
+              <span>← Back to Landing Page</span>
+            </button>
+          </div>
+        )}
         <div className="auth-header auth-header--wide">
           <div className="auth-brand-icon">
             <ShieldCheck className="auth-brand-icon__symbol" />

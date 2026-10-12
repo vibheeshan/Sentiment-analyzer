@@ -404,7 +404,7 @@ export default function Advanced({ analyses }) {
   ];
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-[1400px] mx-auto">
+    <div className="flex w-full min-w-0 flex-col gap-6">
       {/* Page Header */}
       <div className="flex flex-col gap-2">
         <h2 className="text-[24px] font-extrabold text-slate-900 dark:text-slate-100 flex items-center gap-2">

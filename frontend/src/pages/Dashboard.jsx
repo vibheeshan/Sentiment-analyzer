@@ -14,6 +14,8 @@ import {
 import BrandHealthScore from '../components/BrandHealthScore';
 import HeatmapCalendar from '../components/HeatmapCalendar';
 import AnomalyBanner from '../components/AnomalyBanner';
+import InsightsPanel from '../components/InsightsPanel';
+import SentimentTreemap from '../components/SentimentTreemap';
 
 // Count Up Animation
 function CountUp({ value, duration = 1.2, suffix = "" }) {
@@ -293,7 +295,7 @@ export default function Dashboard({
   ];
 
   return (
-    <div className="flex flex-col gap-6 w-full min-w-0 max-w-[1600px] mx-auto">
+    <div className="flex w-full min-w-0 flex-col gap-6">
       {/* No Data State */}
       {analyses.length === 0 && (
         <div className="card p-12 flex flex-col items-center justify-center gap-4 text-center rounded-[18px]">
@@ -402,6 +404,12 @@ export default function Dashboard({
                 </AreaChart>
               </ResponsiveContainer>
             </div>
+          </div>
+
+          {/* AI Insights & Topic Treemap */}
+          <div className="grid lg:grid-cols-2 gap-6">
+            <InsightsPanel />
+            <SentimentTreemap />
           </div>
 
           {/* ── Brand Health Score ─────────────────────────────────────── */}

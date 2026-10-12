@@ -150,13 +150,12 @@ export default function HeatmapCalendar() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             className="fixed pointer-events-none"
-            style={{ zIndex: 'var(--z-overlay-panel)' }}
-            style={{ top: tooltip.y - 80, left: tooltip.x - 60 }}
+            style={{ zIndex: 100, top: Math.max(10, tooltip.y - 85), left: Math.max(10, tooltip.x - 60) }}
           >
-            <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2.5 shadow-2xl flex flex-col gap-0.5">
-              <span className="text-[10px] font-black text-slate-700 dark:text-slate-300">{tooltip.date}</span>
-              <span className="text-[10px] text-slate-500 dark:text-slate-400">Health: <strong className="text-slate-800 dark:text-slate-200">{tooltip.score}%</strong></span>
-              <span className="text-[10px] text-slate-500 dark:text-slate-400">Reviews: <strong className="text-slate-800 dark:text-slate-200">{tooltip.totalReviews}</strong></span>
+            <div className="bg-slate-900/95 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 shadow-2xl flex flex-col gap-0.5">
+              <span className="text-[10px] font-black text-slate-200">{tooltip.date}</span>
+              <span className="text-[10px] text-slate-400">Health Score: <strong className="text-slate-100">{tooltip.score}%</strong></span>
+              <span className="text-[10px] text-slate-400">Reviews: <strong className="text-slate-100">{tooltip.totalReviews}</strong></span>
               <span className="text-[9px] font-bold uppercase tracking-wider mt-0.5"
                 style={{
                   color: tooltip.score >= 72 ? '#10B981' : tooltip.score >= 58 ? '#F59E0B' : '#EF4444'

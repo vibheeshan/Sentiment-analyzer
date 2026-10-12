@@ -195,15 +195,15 @@ export default function HistoryPage({ analyses = [], onInspect, loading = false 
         >
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="sticky top-0 bg-[#0b0f19]/90 backdrop-blur-sm border-b border-white/8" style={{ zIndex: 'var(--z-sticky)' }}>
+              <thead className="sticky top-0 bg-[#0b0f19]/90 backdrop-blur-sm border-b border-white/8 z-10">
                 <tr>
-                  <th className="px-5 py-3.5 text-left text-[10px] font-extrabold uppercase tracking-[0.24em] text-slate-500">Campaign</th>
-                  <th className="px-5 py-3.5 text-left text-[10px] font-extrabold uppercase tracking-[0.24em] text-slate-500">Created</th>
-                  <th className="px-5 py-3.5 text-right text-[10px] font-extrabold uppercase tracking-[0.24em] text-slate-500">Entries</th>
-                  <th className="px-5 py-3.5 text-center text-[10px] font-extrabold uppercase tracking-[0.24em] text-slate-500">Positive</th>
-                  <th className="px-5 py-3.5 text-center text-[10px] font-extrabold uppercase tracking-[0.24em] text-slate-500">Negative</th>
-                  <th className="px-5 py-3.5 text-right text-[10px] font-extrabold uppercase tracking-[0.24em] text-slate-500">Confidence</th>
-                  <th className="px-5 py-3.5 text-right text-[10px] font-extrabold uppercase tracking-[0.24em] text-slate-500">Action</th>
+                  <th className="px-5 py-3.5 text-left text-[10px] font-extrabold uppercase tracking-[0.24em] text-slate-500">CAMPAIGN</th>
+                  <th className="px-5 py-3.5 text-left text-[10px] font-extrabold uppercase tracking-[0.24em] text-slate-500">CREATED</th>
+                  <th className="px-5 py-3.5 text-right text-[10px] font-extrabold uppercase tracking-[0.24em] text-slate-500">ENTRIES</th>
+                  <th className="px-5 py-3.5 text-center text-[10px] font-extrabold uppercase tracking-[0.24em] text-slate-500">POSITIVE</th>
+                  <th className="px-5 py-3.5 text-center text-[10px] font-extrabold uppercase tracking-[0.24em] text-slate-500">NEGATIVE</th>
+                  <th className="px-5 py-3.5 text-right text-[10px] font-extrabold uppercase tracking-[0.24em] text-slate-500">CONFIDENCE</th>
+                  <th className="px-5 py-3.5 text-right text-[10px] font-extrabold uppercase tracking-[0.24em] text-slate-500">ACTION</th>
                 </tr>
               </thead>
               <tbody>
@@ -220,7 +220,7 @@ export default function HistoryPage({ analyses = [], onInspect, loading = false 
                         transition={{ delay: idx * 0.03 }}
                         className="border-t border-white/5 hover:bg-purple-500/5 transition-colors group"
                       >
-                        <td className="px-5 py-4">
+                        <td className="px-5 py-3.5">
                           <div className="flex items-center gap-2.5">
                             <div className="w-7 h-7 rounded-lg bg-purple-500/15 flex items-center justify-center shrink-0">
                               <BarChart2 className="w-3.5 h-3.5 text-purple-400" />
@@ -228,25 +228,25 @@ export default function HistoryPage({ analyses = [], onInspect, loading = false 
                             <span className="font-semibold text-slate-100 truncate max-w-[200px]">{a.name}</span>
                           </div>
                         </td>
-                        <td className="px-5 py-4 text-xs text-slate-500 whitespace-nowrap">
+                        <td className="px-5 py-3.5 text-xs text-slate-500 whitespace-nowrap">
                           {a.created_at ? new Date(a.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
                         </td>
-                        <td className="px-5 py-4 text-right font-mono font-semibold text-slate-300">{a.total_entries?.toLocaleString()}</td>
-                        <td className="px-5 py-4 text-center">
+                        <td className="px-5 py-3.5 text-right font-mono font-semibold text-slate-300">{a.total_entries?.toLocaleString()}</td>
+                        <td className="px-5 py-3.5 text-center">
                           <SentimentBadge value={`${pos}%`} type="positive" />
                         </td>
-                        <td className="px-5 py-4 text-center">
+                        <td className="px-5 py-3.5 text-center">
                           <SentimentBadge value={`${neg}%`} type="negative" />
                         </td>
-                        <td className="px-5 py-4 text-right font-mono text-xs font-bold text-slate-400">
+                        <td className="px-5 py-3.5 text-right font-mono text-xs font-bold text-slate-400">
                           {a.avg_confidence != null ? `${a.avg_confidence.toFixed(1)}%` : '—'}
                         </td>
-                        <td className="px-5 py-4 text-right">
+                        <td className="px-5 py-3.5 text-right">
                           <button
                             onClick={() => onInspect && onInspect(a.id)}
-                            className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3.5 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400 transition-all hover:border-purple-500/40 hover:text-purple-300 hover:bg-purple-500/8 hover:shadow-[0_0_12px_rgba(124,58,237,0.15)] group-hover:scale-105"
+                            className="btn btn-sm btn-ghost hover:text-purple-300"
                           >
-                            Inspect <ArrowRight className="w-3 h-3" />
+                            <span>INSPECT</span> <ArrowRight className="w-3 h-3" />
                           </button>
                         </td>
                       </motion.tr>

@@ -205,7 +205,7 @@ export default function Analyze({ onRunAnalysis }) {
   const lineCount = newText.split('\n').filter(t => t.trim()).length;
 
   return (
-    <div className="max-w-5xl mx-auto w-full flex flex-col gap-6">
+    <div className="w-full min-w-0 flex flex-col gap-6">
       <div className="card p-6 rounded-[22px] flex flex-col gap-5 border border-slate-200/70 dark:border-white/10">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>

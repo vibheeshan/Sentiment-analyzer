@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Layers, HelpCircle, Activity, ShieldCheck, FileText, AlertTriangle } from 'lucide-react';
+import { Layers, HelpCircle, Activity, ShieldCheck, FileText, AlertTriangle, TrendingUp, RefreshCw } from 'lucide-react';
 import {
   ResponsiveContainer,
   PieChart,
@@ -39,6 +39,7 @@ const Advanced = React.lazy(() => import('./pages/Advanced'));
 const Export = React.lazy(() => import('./pages/Export'));
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import LandingPage from './pages/LandingPage';
 const VisualAnalysis = React.lazy(() => import('./pages/VisualAnalysis'));
 
 // Lazy-loaded legacy components (code-split per tab)
@@ -50,6 +51,15 @@ const CustomDashboards = React.lazy(() => import('./components/CustomDashboards'
 const ReviewAggregation = React.lazy(() => import('./components/ReviewAggregation'));
 const HistoryPage = React.lazy(() => import('./components/HistoryPage'));
 const SettingsPage = React.lazy(() => import('./components/SettingsPage'));
+const TeamManagement = React.lazy(() => import('./components/TeamManagement'));
+const AlertDashboard = React.lazy(() => import('./components/AlertDashboard'));
+const DataUploader = React.lazy(() => import('./components/DataUploader'));
+const ReportBuilder = React.lazy(() => import('./components/ReportBuilder'));
+const ExportModal = React.lazy(() => import('./components/ExportModal'));
+const AdvancedSearch = React.lazy(() => import('./components/AdvancedSearch'));
+const WidgetGrid = React.lazy(() => import('./components/WidgetGrid'));
+const ActivityFeed = React.lazy(() => import('./components/collaboration/ActivityFeed'));
+const FeedbackThread = React.lazy(() => import('./components/collaboration/FeedbackThread'));
 
 // API Service
 import { apiService } from './services/api';
@@ -80,7 +90,8 @@ export default function App() {
   const [alertFilter, setAlertFilter]   = useState('All');
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [userSession, setUserSession] = useState(null);
-  const [authMode, setAuthMode] = useState('login');
+  const [authMode, setAuthMode] = useState('landing');
+  const [exportModalOpen, setExportModalOpen] = useState(false);
 
   useEffect(() => { fetchAll(); }, []);
 
@@ -178,7 +189,7 @@ export default function App() {
 
   const handleLogout = () => {
     setUserSession(null);
-    setAuthMode('login');
+    setAuthMode('landing');
     setAnalyses([]);
     setAlerts([]);
     setAbsaData(null);
@@ -219,13 +230,43 @@ export default function App() {
   if (!userSession) {
     return (
       <ThemeProvider>
-        <div className="auth-shell">
-          {authMode === 'login' ? (
-            <Login onLogin={handleLogin} onSwitchToSignup={() => setAuthMode('signup')} />
-          ) : (
-            <Signup onSignup={handleSignup} onSwitchToLogin={() => setAuthMode('login')} />
-          )}
-        </div>
+        {authMode === 'landing' ? (
+          <LandingPage
+            onLoginClick={() => setAuthMode('login')}
+            onSignupClick={() => setAuthMode('signup')}
+            onDemoClick={() => handleLogin({ userId: 1, username: 'Demo User', email: 'demo@brandpulse.ai' })}
+          />
+        ) : (
+          <div className="auth-shell">
+            {authMode === 'login' ? (
+              <Login 
+                onLogin={handleLogin} 
+                onSwitchToSignup={() => setAuthMode('signup')} 
+                onBackToHome={() => setAuthMode('landing')}
+              />
+            ) : (
+              <Signup 
+                onSignup={handleSignup} 
+                onSwitchToLogin={() => setAuthMode('login')} 
+                onBackToHome={() => setAuthMode('landing')}
+              />
+            )}
+          </div>
+        )}
+      </ThemeProvider>
+    );
+  }
+
+  if (activeTab === 'landing') {
+    return (
+      <ThemeProvider>
+        <LandingPage
+          userSession={userSession}
+          onLoginClick={() => setActiveTab('dashboard')}
+          onSignupClick={() => setActiveTab('dashboard')}
+          onDemoClick={() => setActiveTab('dashboard')}
+          onDashboardClick={() => setActiveTab('dashboard')}
+        />
       </ThemeProvider>
     );
   }
@@ -249,7 +290,7 @@ export default function App() {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           onShare={handleShare}
-          onExportCsv={exportCsv}
+          onExportCsv={() => setExportModalOpen(true)}
           onMenuToggle={() => setIsMobileOpen(true)}
         >
           <Suspense fallback={<TabLoader />}>
@@ -270,6 +311,15 @@ export default function App() {
                   forecastData={forecastData}
                   onInspectCampaign={(id) => { setSelectedId(id); setActiveTab('absa'); }}
                   onInspectForecast={handleInspectForecast}
+                />
+              )}
+
+              {/* Landing Page tab */}
+              {activeTab === 'landing' && (
+                <LandingPage
+                  onLoginClick={() => setActiveTab('dashboard')}
+                  onSignupClick={() => setActiveTab('dashboard')}
+                  onDemoClick={() => setActiveTab('dashboard')}
                 />
               )}
 
@@ -312,76 +362,37 @@ export default function App() {
 
               {/* Advanced Analytics tab */}
               {activeTab === 'advanced' && (
-                <Advanced analyses={analyses} />
+                <div className="flex flex-col gap-6">
+                  <AdvancedSearch onSearch={(q) => console.log(q)} />
+                  <Advanced analyses={analyses} />
+                </div>
               )}
 
               {/* Export Page tab */}
               {activeTab === 'export' && (
-                <Export analyses={analyses} activeBrand="Nike Inc." />
+                <div className="flex flex-col gap-6">
+                  <ReportBuilder analyses={analyses} />
+                  <Export analyses={analyses} activeBrand="Nike Inc." />
+                </div>
               )}
 
               {/* History tab */}
               {activeTab === 'history' && (
                 <HistoryPage analyses={analyses} onInspect={(id) => { setSelectedId(id); setActiveTab('absa'); }} />
               )}
-
               {/* Alerts & Rules tab */}
               {activeTab === 'alerts' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    {[{ key: 'inbox', label: '📥 Alert Inbox' }, { key: 'thresholds', label: '⚙️ Thresholds' }, { key: 'test', label: '🧪 Test Alert' }].map(t => (
-                      <button key={t.key} onClick={() => setAlertTab(t.key)} className={`btn ${alertTab === t.key ? 'btn-primary' : 'btn-ghost'}`}>{t.label}</button>
-                    ))}
-                  </div>
-
-                  {alertTab === 'inbox' && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <h3 style={{ fontWeight: '800', fontSize: '15px' }}>{unread > 0 ? `📬 ${unread} unread alerts` : '📭 All caught up!'}</h3>
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                          <select className="input" style={{ padding: '7px 12px', fontSize: '12px', width: 'auto' }} value={alertFilter} onChange={e => setAlertFilter(e.target.value)}>
-                            {['All', 'critical', 'warning', 'info', 'success'].map(o => <option key={o}>{o}</option>)}
-                          </select>
-                        </div>
-                      </div>
-                      {(alertFilter === 'All' ? alerts : alerts.filter(a => a.severity === alertFilter)).map(a => (
-                        <div key={a.id} className="card" style={{ display: 'flex', gap: '14px', borderLeft: `4px solid ${{ critical: 'var(--red)', warning: 'var(--amber)', info: 'var(--sky)', success: 'var(--emerald)' }[a.severity] || 'var(--border)'}` }}>
-                          <AlertTriangle className="nav-icon" style={{ color: 'var(--amber)', marginTop: '2px', flexShrink: 0 }} />
-                          <div style={{ flex: 1 }}>
-                            <div style={{ fontWeight: '800', fontSize: '13px', color: 'var(--text-1)', textTransform: 'capitalize' }}>{a.alert_type?.replace(/_/g, ' ')}</div>
-                            <div style={{ fontSize: '12px', color: 'var(--text-2)', marginTop: '3px' }}>{a.message}</div>
-                            <div style={{ fontSize: '10px', color: 'var(--text-3)', marginTop: '4px' }}>{a.triggered_at?.slice(0, 19)}</div>
-                          </div>
-                          {a.status === 'unread' && <span className="badge badge-amber">NEW</span>}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {alertTab === 'thresholds' && <SettingsPage userId={userSession?.userId || 1} />}
-                  {alertTab === 'test' && (
-                    <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '600px' }}>
-                      <h3 style={{ fontWeight: '800', fontSize: '15px' }}>🧪 Simulate Alert Rules</h3>
-                      <p style={{ fontSize: '12px', color: 'var(--text-3)' }}>Enter sample values to preview which alerts would be triggered.</p>
-                      {[
-                        { label: 'Total Reviews', placeholder: '100', type: 'number' },
-                        { label: 'Positive Count', placeholder: '30', type: 'number' },
-                        { label: 'Negative Count', placeholder: '65', type: 'number' },
-                        { label: 'Avg Confidence %', placeholder: '72', type: 'number' },
-                      ].map(f => (
-                        <div key={f.label}>
-                          <label className="metric-label" style={{ display: 'block', marginBottom: '5px' }}>{f.label}</label>
-                          <input className="input" type={f.type} placeholder={f.placeholder} />
-                        </div>
-                      ))}
-                      <button className="btn btn-primary" style={{ alignSelf: 'flex-start' }}>▶️ Run Simulation</button>
-                    </div>
-                  )}
-                </div>
+                <AlertDashboard />
               )}
 
               {/* Settings tab */}
               {activeTab === 'settings' && <SettingsPage userId={userSession?.userId || 1} />}
+              
+              {/* Team tab */}
+              {activeTab === 'team' && <TeamManagement />}
+              
+              {/* Upload tab */}
+              {activeTab === 'upload' && <DataUploader />}
 
               {/* Real-time Monitor tab */}
               {activeTab === 'realtime' && <RealtimeMonitor />}
@@ -400,6 +411,20 @@ export default function App() {
 
               {/* Visual Analysis tab */}
               {activeTab === 'visual' && <VisualAnalysis />}
+
+              {/* Widget Dashboard tab */}
+              {activeTab === 'dashboards' && (
+                <div className="flex flex-col gap-6">
+                  <WidgetGrid data={{ positiveRate: 68.4, negativeRate: 18.3, total: '8,240', confidence: 88.7 }} />
+                  <CustomDashboards />
+                </div>
+              )}
+
+              {/* Collaboration – Activity tab */}
+              {activeTab === 'activity' && <ActivityFeed />}
+
+              {/* Collaboration – Discuss tab */}
+              {activeTab === 'discuss' && <FeedbackThread />}
 
               {/* Aspect Sentiment (ABSA) tab */}
               {activeTab === 'absa' && (
@@ -489,31 +514,56 @@ export default function App() {
               {activeTab === 'forecast' && (
                 <div className="panel">
                   <div className="card flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-                    <h3 className="text-lg font-black">Sentiment Forecast Horizon</h3>
+                    <div>
+                      <h3 className="text-base font-black text-slate-100">Sentiment Forecast Horizon</h3>
+                      <p className="text-xs text-slate-400 mt-0.5">Predictive sentiment modeling based on historical review trends</p>
+                    </div>
                     <div className="flex flex-wrap items-center gap-3">
                       <span className="text-xs font-semibold text-slate-400">Horizon: {forecastDays} days</span>
-                      <div className="w-full max-w-[260px]"><input type="range" min="3" max="30" value={forecastDays} onChange={e => setForecastDays(Number(e.target.value))} className="w-full accent-sky-500" /></div>
-                      <div className="w-full max-w-[200px]"><select value={selectedId || ''} onChange={e => setSelectedId(Number(e.target.value))} className="input w-full">{analyses.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}</select></div>
+                      <div className="w-full max-w-[200px]">
+                        <input type="range" min="3" max="30" value={forecastDays} onChange={e => setForecastDays(Number(e.target.value))} className="w-full accent-purple-500" />
+                      </div>
+                      <div className="w-full max-w-[200px]">
+                        <select value={selectedId || ''} onChange={e => setSelectedId(Number(e.target.value))} className="input text-xs h-[40px] py-1">
+                          {analyses.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
+                        </select>
+                      </div>
                     </div>
                   </div>
-                  {forecastData ? (
-                    <div className="card h-[420px]">
+                  {forecastData && (forecastData.historical_dates?.length > 0 || forecastData.forecast_dates?.length > 0) ? (
+                    <div className="card h-[400px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={[
-                          ...forecastData.historical_dates.map((d, i) => ({ date: d, Positive: forecastData.historical_values[i] })),
-                          ...forecastData.forecast_dates.map((d, i) => ({ date: d, Forecast: forecastData.forecast_values[i] })),
+                          ...(forecastData.historical_dates || []).map((d, i) => ({ date: d, Historical: forecastData.historical_values?.[i] })),
+                          ...(forecastData.forecast_dates || []).map((d, i) => ({ date: d, Forecast: forecastData.forecast_values?.[i] })),
                         ]}>
                           <CartesianGrid stroke="rgba(255,255,255,0.04)" />
                           <XAxis dataKey="date" stroke="#64748b" tick={{ fontSize: 10 }} />
                           <YAxis domain={[0, 100]} stroke="#64748b" />
                           <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderRadius: '12px', border: '1px solid #334155' }} />
-                          <Line type="monotone" dataKey="Positive" stroke="#10B981" strokeWidth={2.5} dot={false} name="Historical" />
+                          <Line type="monotone" dataKey="Historical" stroke="#10B981" strokeWidth={2.5} dot={false} name="Historical" />
                           <Line type="monotone" dataKey="Forecast" stroke="#F59E0B" strokeDasharray="5 5" strokeWidth={2.5} dot={false} name="Forecast" />
                         </LineChart>
                       </ResponsiveContainer>
                     </div>
                   ) : (
-                    <div className="card text-center p-12 text-slate-500 dark:text-slate-400">Select an analysis above to load its forecast.</div>
+                    <div className="card p-12 text-center flex flex-col items-center justify-center gap-3 border border-dashed border-slate-700/60 rounded-2xl bg-slate-900/40">
+                      <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-1">
+                        <TrendingUp className="w-6 h-6" />
+                      </div>
+                      <h4 className="text-base font-extrabold text-slate-100">Forecast Unavailable</h4>
+                      <p className="text-xs text-slate-400 max-w-md">Insufficient historical data to generate a reliable forecast.</p>
+                      <button
+                        onClick={() => {
+                          const idToUse = selectedId || analyses[0]?.id;
+                          if (idToUse) fetchForecast(idToUse, forecastDays);
+                        }}
+                        className="btn btn-primary h-[40px] px-5 text-xs font-bold mt-2"
+                      >
+                        <RefreshCw className="w-3.5 h-3.5" />
+                        <span>Refresh Forecast</span>
+                      </button>
+                    </div>
                   )}
                 </div>
               )}
@@ -559,6 +609,11 @@ export default function App() {
         {/* Floating Chatbot Assistant */}
         <Suspense fallback={null}>
           <ChatBot />
+          <ExportModal 
+            isOpen={exportModalOpen} 
+            onClose={() => setExportModalOpen(false)} 
+            data={analyses}
+          />
         </Suspense>
       </div>
     </ThemeProvider>

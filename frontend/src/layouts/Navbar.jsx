@@ -4,22 +4,28 @@ import { Search, Share2, Download, Sun, Moon, Copy, Check, X, Menu, Bell, Sparkl
 import BrandSwitcher from '../components/BrandSwitcher';
 import { useTheme } from '../context/ThemeProvider';
 import Popover from '../components/ui/Popover';
+import GlobalSearch from '../components/GlobalSearch';
 
 const PAGE_TITLES = {
   dashboard:   'Brand Dashboard',
   analyze:     'Run Analysis',
   advanced:    'Advanced AI',
+  upload:      'Data Import',
   export:      'Export & Reports',
   history:     'Campaign History',
   alerts:      'Alerts & Rules',
   realtime:    'Real-Time Monitor',
   multisource: 'Multi-Source Hub',
   topics:      'Topic Discovery',
-  dashboards:  'Custom Dashboards',
+  dashboards:  'Widget Dashboard',
   reviews:     'Review Aggregator',
   absa:        'Aspect Sentiment',
   forecast:    'Forecasting',
   benchmark:   'Benchmarking',
+  visual:      'Visual Analysis',
+  activity:    'Activity Feed',
+  discuss:     'Team Discussions',
+  team:        'Team Management',
   settings:    'Settings',
 };
 
@@ -86,7 +92,7 @@ export default function Navbar({
 
   return (
     <>
-      <header className="topbar sticky top-0 z-[var(--z-sticky)] flex h-[72px] min-h-[72px] items-center justify-between gap-4 border-b border-slate-200 bg-white/70 px-6 backdrop-blur-md dark:border-white/5 dark:bg-[#0b0f19]/80" role="banner">
+      <header className="topbar sticky top-0 z-[var(--z-sticky)] flex h-[68px] min-h-[68px] items-center justify-between gap-3 border-b border-slate-200 bg-white/80 px-5 backdrop-blur-md dark:border-white/5 dark:bg-[#070a13]/85" role="banner">
         {/* Left section: Hamburger, Brand Switcher, Page Title */}
         <div className="flex flex-1 items-center gap-3 min-w-0">
           {/* Mobile hamburger */}
@@ -112,63 +118,17 @@ export default function Navbar({
         </div>
 
         {/* Right section: Search bar, Theme toggle, Share, CSV Export */}
-        <div className="flex flex-shrink-0 items-center gap-3">
+        <div className="flex flex-shrink-0 items-center gap-2.5">
           {/* Search bar */}
-          <div className="relative hidden md:block">
-            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <input
-              ref={searchInputRef}
-              type="text"
-              className="input h-[48px] rounded-[14px] pl-11 pr-12 text-xs font-semibold md:w-[280px] lg:w-[360px]"
-              placeholder="Search campaigns… (⌘K)"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              onFocus={() => setShowSuggestions(true)}
-              onBlur={() => setTimeout(() => setShowSuggestions(false), 120)}
-              aria-label="Search campaigns"
-            />
-            {searchQuery ? (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 hover:text-slate-200"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            ) : (
-              <kbd className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 rounded border border-slate-200 bg-slate-100 px-1.5 py-0.5 text-[10px] font-black text-slate-400 dark:border-white/10 dark:bg-white/10">
-                ⌘K
-              </kbd>
-            )}
-
-            <Popover
-              isOpen={showSuggestions}
-              onClose={() => setShowSuggestions(false)}
-              triggerRef={searchInputRef}
-              matchWidth={true}
-              className="p-2"
-            >
-              <div className="mb-1 flex items-center gap-2 px-2 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">
-                <Sparkles className="h-3 w-3 text-purple-500" /> Recent searches
-              </div>
-              {searchSuggestions.map(item => (
-                <button
-                  key={item.value}
-                  type="button"
-                  onMouseDown={() => setSearchQuery(item.value)}
-                  className="flex w-full items-center justify-between rounded-[10px] px-2.5 py-2 text-left text-xs font-semibold text-slate-600 transition hover:bg-purple-500/10 hover:text-purple-600 dark:text-slate-300"
-                >
-                  <span>{item.label}</span>
-                  <span className="text-[10px] uppercase tracking-[0.2em] text-slate-400">{item.value}</span>
-                </button>
-              ))}
-            </Popover>
+          <div className="relative hidden xl:block w-72 lg:w-96 max-w-[380px]">
+            <GlobalSearch onSelect={(item) => console.log('Selected:', item)} />
           </div>
 
           <div className="relative">
             <button
               ref={notificationBtnRef}
               onClick={() => setShowNotifications(v => !v)}
-              className="btn btn-icon btn-ghost h-[48px] w-[48px]"
+              className="btn btn-icon btn-ghost h-[42px] w-[42px]"
               aria-label="Notifications"
             >
               <Bell className="w-4 h-4" />
@@ -178,39 +138,41 @@ export default function Navbar({
               onClose={() => setShowNotifications(false)}
               triggerRef={notificationBtnRef}
               align="right"
-              style={{ width: '280px' }}
+              style={{ width: '300px' }}
               className="p-2"
             >
               <div className="flex items-center justify-between px-2 py-2">
-                <div className="text-xs font-black uppercase tracking-[0.24em] text-slate-500">Notifications</div>
-                <button className="text-[10px] font-bold text-purple-500">Mark all read</button>
+                <div className="text-[11px] font-black uppercase tracking-wider text-slate-400">Notifications</div>
+                <button className="text-[10px] font-bold text-purple-400 hover:underline">Mark all read</button>
               </div>
-              {notificationItems.map(item => (
-                <div key={item.title} className={`rounded-[12px] border px-3 py-2.5 ${item.unread ? 'border-purple-500/20 bg-purple-500/10' : 'border-slate-200/70 dark:border-white/10'}`}>
-                  <div className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
-                    {item.unread && <span className="h-2 w-2 rounded-full bg-purple-500" />}
-                    {item.title}
+              <div className="flex flex-col gap-1.5 mt-1">
+                {notificationItems.map(item => (
+                  <div key={item.title} className={`rounded-[10px] border px-3 py-2 ${item.unread ? 'border-purple-500/30 bg-purple-500/10' : 'border-slate-200/70 dark:border-white/10'}`}>
+                    <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 dark:text-slate-100">
+                      {item.unread && <span className="h-1.5 w-1.5 rounded-full bg-purple-400" />}
+                      {item.title}
+                    </div>
+                    <div className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">{item.detail}</div>
+                    <div className="mt-1 flex items-center gap-1.5 text-[10px] text-slate-400">
+                      <Clock3 className="h-3 w-3" /> {item.time}
+                    </div>
                   </div>
-                  <div className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">{item.detail}</div>
-                  <div className="mt-2 flex items-center gap-2 text-[10px] text-slate-400">
-                    <Clock3 className="h-3 w-3" /> {item.time}
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </Popover>
           </div>
 
           {/* Theme toggle */}
           <motion.button
-            whileTap={{ scale: 0.92 }}
+            whileTap={{ scale: 0.94 }}
             onClick={toggleTheme}
-            className="btn btn-icon btn-ghost h-[48px] w-[48px]"
+            className="btn btn-icon btn-ghost h-[42px] w-[42px]"
             title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
             aria-label="Toggle theme"
           >
             {!isDarkMode
               ? <Sun  className="w-4 h-4 text-amber-500" />
-              : <Moon className="w-4 h-4 text-indigo-400" />
+              : <Moon className="w-4 h-4 text-purple-400" />
             }
           </motion.button>
 
@@ -219,7 +181,7 @@ export default function Navbar({
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={handleShare}
-            className="btn btn-primary h-[48px] px-4 text-xs font-bold hidden sm:inline-flex whitespace-nowrap shrink-0"
+            className="btn btn-primary h-[42px] px-4 text-xs font-bold hidden lg:inline-flex whitespace-nowrap shrink-0"
             aria-label="Share dashboard"
           >
             <Share2 className="w-4 h-4" />
@@ -231,7 +193,7 @@ export default function Navbar({
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={onExportCsv}
-            className="btn btn-ghost h-[48px] px-4 text-xs font-bold hidden sm:inline-flex whitespace-nowrap shrink-0"
+            className="btn btn-secondary h-[42px] px-4 text-xs font-bold hidden lg:inline-flex whitespace-nowrap shrink-0"
             aria-label="Export CSV"
           >
             <Download className="w-4 h-4 text-sky-400" />

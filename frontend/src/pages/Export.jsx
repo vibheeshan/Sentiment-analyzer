@@ -251,7 +251,7 @@ export default function Export({ analyses, activeBrand }) {
   };
 
   return (
-    <div className="flex flex-col gap-6 w-full min-w-0 max-w-[1400px] mx-auto">
+    <div className="flex w-full min-w-0 flex-col gap-6">
       <Toast message={toastMessage} visible={Boolean(toastMessage)} onClose={() => setToastMessage('')} />
       {/* Page Header */}
       <div className="flex flex-col gap-2">
